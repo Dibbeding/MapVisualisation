@@ -1,13 +1,17 @@
 <template>
-  <div id="app" class="small-container">
+  <div id="app">
     <upper-tool-bar />
     <table>
       <tr>
         <th>
-          <left-tool-bar />
+          <keep-alive>
+            <left-tool-bar v-on:change-component="SwitchComponent($event)" />
+          </keep-alive>
         </th>
         <th>
-          <map-tool />
+          
+            <component v-bind:is="component" />
+          
         </th>
       </tr>
     </table>
@@ -15,18 +19,48 @@
 </template>
 
 <script>
-//https://www.w3schools.com/howto/tryit.asp?filename=tryhow_js_overlay
-//https://codesandbox.io/s/vuejssidebarmenuburgerobservable-iv1zc?file=/src/components/Menu/Sidebar.vue
+// Tool Bars
 import LeftToolBar from './components/LeftToolBar.vue'
 import UpperToolBar from './components/UpperToolBar.vue'
+// Map
 import MapTool from './components/MapTool.vue'
+// Side Tools
+import FilterAndSort from './components/FilterAndSort.vue'
+import GeneralInfo from './components/GeneralInfo.vue'
+import Glossary from './components/Glossary.vue'
+import DownloadData from './components/DownloadData.vue'
+import Help from './components/Help.vue'
 
 export default {
-  name: 'App',
+  name: 'app',
   components: {
-    LeftToolBar,
+    // Tool Bars
     UpperToolBar,
+    LeftToolBar,
+    // Map
     MapTool,
+    // Side Tools
+    FilterAndSort,
+    GeneralInfo,
+    Glossary,
+    DownloadData,
+    Help,
+  },
+  data: () => ({
+      component:"MapTool"
+  }),
+  methods: {
+    SwitchComponent(componentType) {
+      console.log("Old value = " + this.component)
+      if (this.component != componentType) {
+        this.component = componentType;
+        console.log("New value (1) = " + this.component)
+      } else {
+        this.component = "MapTool"
+        console.log("New value (2) = " + this.component)
+      }
+      return
+    }
   }
 }
 </script>

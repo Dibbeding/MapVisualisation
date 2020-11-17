@@ -11,6 +11,11 @@
           Hello World
         </h2>
       </th>
+      <th>
+        <button class="button">
+          Help
+        </button>
+      </th>
     </tr>
 </template>
 
@@ -61,10 +66,27 @@ export default {
   vertical-align: center;
   color: rgb(220, 211, 255);
   font-size: large;
-  width: 60vw;
+  width: 45vw;
   height: 100%;
   padding-bottom: 0px;
   padding-top: 21.5px;
   height: 40px;
+}
+
+.button {
+  outline: none;
+  border: none;
+  min-width: 100px;
+  width: 15vw;
+  height: 80px;
+  padding-bottom: 5px;
+  padding-top: 5px;
+  color: white;
+  background-color: rgb(38, 26, 82);
+  display:block;
+}
+.button:hover,
+.button:focus {
+  background-color: rgb(55, 39, 112);
 }
 </style>
