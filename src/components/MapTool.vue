@@ -1,12 +1,10 @@
 <template>
-  <div class="container mt-3 mt-sm-5" id="app">
+  <div class="container mt-3 mt-sm-5" id="maptool">
     <div class="row">
       <div class="col-md-9">
         <div class="map" id="map"></div>
       </div>
       <div class="col-md-3">
-        <div class="text-block" id=infoBlock>
-        </div>
         <div
           class="form-check"
           v-for="layer in layers"
@@ -19,7 +17,7 @@
               v-model="layer.active"
               @change="layerChanged(layer.id, layer.active)"
             />
-            {{ layer.name }}
+            
           </label>
         </div>
       </div>
@@ -32,25 +30,28 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
 var geojson
-var info = L.control();
+
 
 export default {
   name: 'map-tool',
   data() {
     return {
-      
+      layers: []
     }
   },
+
+  created() {
+  },
+
   mounted() {
     this.initMap();
-    this.highlightFeature();
-    this.resetHighlight();
-    this.zoomToFeature();
-    this.onEachFeature();
   },
+
   methods: {
 
     onEachFeature(feature, layer) {
+      layer.bindPopup(feature.properties.name);
+      
       layer.on({
         mouseover: this.highlightFeature,
         mouseout: this.resetHighlight,
@@ -69,11 +70,11 @@ export default {
         fillOpacity: 0.7
       });
 
-      if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
-        //layer.bringToFront();
-      }
+      layer.openPopup();
 
-      this.textBlock.text = this.feature.properties.pop_est;
+      /*if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+        layer.bringToFront();
+      }*/
     },
 
     resetHighlight(e) {
@@ -145,32 +146,32 @@ export default {
         };
       }
       
-      geojson = L.geoJson(nAmericaData, {
+      geojson = L.geoJSON(nAmericaData, {
         style: style,
         onEachFeature: this.onEachFeature
       }).addTo(this.map);
-      geojson = L.geoJson(sAmericaData, {
+      geojson = L.geoJSON(sAmericaData, {
         style: style,
         onEachFeature: this.onEachFeature
       }).addTo(this.map);
-      geojson = L.geoJson(asiaData, {
+      geojson = L.geoJSON(asiaData, {
         style: style,
         onEachFeature: this.onEachFeature
       }).addTo(this.map);
-      geojson = L.geoJson(africaData, {
+      geojson = L.geoJSON(africaData, {
         style: style,
         onEachFeature: this.onEachFeature
       }).addTo(this.map);
-      geojson = L.geoJson(europeData, {
+      geojson = L.geoJSON(europeData, {
         style: style,
         onEachFeature: this.onEachFeature
       }).addTo(this.map);
-      geojson = L.geoJson(oceaniaData, {
+      geojson = L.geoJSON(oceaniaData, {
         style: style,
         onEachFeature: this.onEachFeature
       }).addTo(this.map);
 
-      info.addTo(this.map);
+      //.addTo(this.map);
 
     },
   }
@@ -181,19 +182,6 @@ export default {
 .map { 
   height: 95vh;
   width: 95vw;
-}
-
-.info {
-    padding: 6px 8px;
-    font: 14px/16px Arial, Helvetica, sans-serif;
-    background: white;
-    background: rgba(255,255,255,0.8);
-    box-shadow: 0 0 15px rgba(0,0,0,0.2);
-    border-radius: 5px;
-}
-.info h4 {
-    margin: 0 0 5px;
-    color: #777;
 }
 
 .text-block {

@@ -9,9 +9,9 @@
           </keep-alive>
         </th>
         <th>
-          
+          <keep-alive>
             <component v-bind:is="component" />
-          
+          </keep-alive>
         </th>
       </tr>
     </table>
@@ -47,17 +47,14 @@ export default {
     Help,
   },
   data: () => ({
-      component:"MapTool"
+      component:"FilterAndSort"
   }),
   methods: {
     SwitchComponent(componentType) {
-      console.log("Old value = " + this.component)
       if (this.component != componentType) {
         this.component = componentType;
-        console.log("New value (1) = " + this.component)
       } else {
         this.component = "MapTool"
-        console.log("New value (2) = " + this.component)
       }
       return
     }
