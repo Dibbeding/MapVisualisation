@@ -5,7 +5,7 @@
       <tr>
         <th>
           <keep-alive>
-            <left-tool-bar v-on:change-component="SwitchComponent($event)" />
+            <left-tool-bar class="left-toolbar" v-on:change-component="SwitchComponent($event)" />
           </keep-alive>
         </th>
         <th>
