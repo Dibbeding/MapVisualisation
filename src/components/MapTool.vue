@@ -34,6 +34,9 @@ var geojson
 
 export default {
   name: 'map-tool',
+
+  props: ['averageData'],
+
   data() {
     return {
       layers: []
@@ -49,13 +52,14 @@ export default {
 
   methods: {
 
+
     onEachFeature(feature, layer) {
       layer.bindPopup(feature.properties.name);
       
       layer.on({
         mouseover: this.highlightFeature,
         mouseout: this.resetHighlight,
-        click: this.zoomToFeature
+        click: layer.openPopup()
       });
     },
 
@@ -70,7 +74,7 @@ export default {
         fillOpacity: 0.7
       });
 
-      layer.openPopup();
+      //layer.openPopup();
 
       /*if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
         layer.bringToFront();
@@ -125,19 +129,41 @@ export default {
           zoomSnap: 0
       }).addTo(this.map);
 
-      function getColorPopulation(population) {
-      return population > 75000000  ? '#BD0026' :
-             population > 50000000  ? '#E31A1C' :
-             population > 25000000  ? '#FC4E2A' :
-             population > 10000000  ? '#FD8D3C' :
-             population >  5000000  ? '#FEB24C' :
-             population >   100000  ? '#FED976' :
-                                      '#FFEDA0';
+      function getColorPopulation(name) {
+        let value = -1
+        console.log("Name to find: ", name)
+        //console.log("Object: ", this.averageData)
+        /*
+        for (let index = 0; index < this.averageData.length; index++) {
+          if (this.averageData[index].Country == name) { 
+            value = this.averageData[index].Value 
+          }
+        }*/
+
+      let colour1 = '#BF8026', 
+          colour2 = '#BF4026', 
+          colour3 = '#BF2026', 
+          colour4 = '#BD8026', 
+          colour5 = '#BD4026', 
+          colour6 = '#BD2026',
+           limit1 = 0, 
+           limit2 = 100, 
+           limit3 = 500, 
+           limit4 = 5000, 
+           limit5 = 15000, 
+           limit6 = 50000
+      return value > limit6  ? colour6 :
+             value > limit5  ? colour5 :
+             value > limit4  ? colour4 :
+             value > limit3  ? colour3 :
+             value > limit2  ? colour2 :
+             value > limit1  ? colour1 :
+                              '#000000';
 }
 
       function style(feature) {
         return {
-          fillColor: getColorPopulation(feature.properties.pop_est),
+          fillColor: getColorPopulation(feature.properties.name),
           weight: 2,
           opacity: 1,
           color: 'white',

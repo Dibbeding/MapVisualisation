@@ -10,7 +10,7 @@
         </th>
         <th>
           <keep-alive>
-            <component v-bind:is="component" />
+            <component v-bind:is="component" averageData="{{ this.averageData }}" v-on:changed-filters="PassAverageData($event)"/>
           </keep-alive>
         </th>
       </tr>
@@ -47,7 +47,8 @@ export default {
     Help,
   },
   data: () => ({
-      component:"FilterAndSort"
+      component:"FilterAndSort",
+      averageData:{Country: "Blanc", Value: 0}
   }),
   methods: {
     SwitchComponent(componentType) {
@@ -57,6 +58,11 @@ export default {
         this.component = "MapTool"
       }
       return
+    },
+
+    PassAverageData(averageData) {
+        console.log("Data in de app ", averageData)
+        this.averageData = averageData
     }
   }
 }
