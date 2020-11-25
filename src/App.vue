@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <upper-tool-bar />
+    <upper-tool-bar class="header" />
     <table>
       <tr>
         <th>
@@ -10,7 +10,7 @@
         </th>
         <th>
           <keep-alive>
-            <component v-bind:is="component" averageData="{{ this.averageData }}" v-on:changed-filters="PassAverageData($event)"/>
+            <component v-bind:is="component" v-bind:getDataset="averageData" v-on:changed-filters="PassAverageData($event)"/>
           </keep-alive>
         </th>
       </tr>
@@ -48,8 +48,9 @@ export default {
   },
   data: () => ({
       component:"FilterAndSort",
-      averageData:{Country: "Blanc", Value: 0}
+      averageData: []
   }),
+
   methods: {
     SwitchComponent(componentType) {
       if (this.component != componentType) {
@@ -84,6 +85,14 @@ export default {
   background-color: rgb(38, 26, 82);
   min-height: 100vh;
   min-width: 100vh;
+}
+
+.header {
+  padding: 60px;
+  text-align: center;
+  background: #1abc9c;
+  color: white;
+  font-size: 30px;
 }
 
 </style>

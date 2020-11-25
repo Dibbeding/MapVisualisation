@@ -98,7 +98,7 @@ export default {
     computeAverage() {
 
 
-      this.curYearRange = { lowYear: 1961, highYear: 1962 }
+      this.curYearRange = { lowYear: 1990, highYear: 1995 }
       //console.log("Check fullData in computeAverage: ", this.fullData)
 
       // Find the year with the most countries to use as a basis
@@ -112,20 +112,20 @@ export default {
         }
 
       }
-      let averageData = cloneDeep(this.fullData[largestIndex].Year)
 
+      let averageData = cloneDeep(this.fullData[largestIndex].Year)
+      console.log("Basisjaar: ", largestIndex + this.indexSub)
       // Use this array to know the divider for the average calculation
       let averageDivider = new Array(averageData.length)
       for (var i = 0; i < averageData.length; i++) { averageDivider[i] = 1 }
 
       // First calculate the total
       // Iterate over all years
-      for (let indexYear = (this.curYearRange.lowYear + 1); 
+      for (let indexYear = this.curYearRange.lowYear; 
            indexYear <= this.curYearRange.highYear; indexYear++) {
-
+        console.log("Dit jaar: ", indexYear)
         // Iterate over all countries if the year is not used for the basis
-        if (indexYear != largestIndex) {
-
+        if (indexYear != (largestIndex + this.indexSub)) {
           let offsetIndex = 0
           for (let indexCountry = 0; indexCountry < averageData.length; indexCountry++) {
 
@@ -140,24 +140,31 @@ export default {
               switch (result) {
                 // CountryB might be found later
                 case -1:
+                  //console.log("SKIP LAND")
                   //if (indexCountry < 10) { console.log("Country not yet found: ", countryB) }
                   --offsetIndex
                   continue;
       
                 // Country A == Country B, their values can be added
                 case 0:
-                  //if (indexCountry < 10) { console.log("Before adding: ", averageData) }
+                  //console.log("SAME LAND")
+                  if (countryA == "Netherlands") { console.log("Before adding: ", averageData[indexCountry]) }
                   averageData[indexCountry].Value += this.fullData[indexYear - this.indexSub].Year[indexCountry + offsetIndex].Value
                   averageDivider[indexCountry]++
-                  //if (indexCountry < 10) { console.log("After adding: ", averageData) }
+                  if (countryA == "Netherlands") { console.log("After adding: ", averageData[indexCountry]) }
                   break;
 
                 // Country B needs to be inserted into the list
                 case 1:
-                  //console.log("Index to insert = ", indexYear)
-                  //console.log("thing to insert = ", this.fullData[indexYear - this.indexSub].Year[indexCountry + offsetIndex])
-                  averageData.splice((indexYear - this.indexSub), 0, cloneDeep(this.fullData[indexYear - this.indexSub].Year[indexCountry + offsetIndex]))
-                  averageDivider.splice((indexYear - this.indexSub), 0, 1)
+                  /*console.log(" \n \nCountry original = ", countryA)
+                  console.log("thing to insert = ", countryB)
+                  console.log("Result: ", result)
+                  console.log("indexCountry: ", indexCountry)
+                  console.log("Offset: ", indexCountry + offsetIndex)
+                  console.log("INSERT LAND")*/
+                  //console.log("country")
+                  averageData.splice(indexCountry, 0, cloneDeep(this.fullData[indexYear - this.indexSub].Year[indexCountry + offsetIndex]))
+                  averageDivider.splice(indexCountry, 0, 1) 
                   //console.log("Average after: ", averageData)
                   break;
               }//switch
@@ -172,7 +179,7 @@ export default {
         //console.log("Divider: ",  averageDivider[indexCountry])
         averageData[indexCountry].Value /= averageDivider[indexCountry]
       }
-      console.log("Average: ", averageData)
+      //console.log("Average: ", averageData)
       this.$emit('changed-filters', averageData);
     },
 
