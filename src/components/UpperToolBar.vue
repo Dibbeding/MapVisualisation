@@ -1,4 +1,5 @@
 <template>
+  <table>
     <tr>
       <th>
         <h1 class="banner">Map Visualisation</h1>
@@ -17,6 +18,7 @@
         </button>
       </th>
     </tr>
+  </table>
 </template>
 
 <script>

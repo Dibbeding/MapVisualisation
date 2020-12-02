@@ -1,17 +1,50 @@
 <template>
   <div id="app">
-    <upper-tool-bar class="header" />
-    <table>
+    <table class="banner">
+      <th width="5vw">
+      </th>
+      <th width="30vw">
+        <h1 font-size="small"> <nobr>MapTheData </nobr> </h1>
+      </th>
+      <th width="5vw">
+        <h1>  </h1>
+      </th>
+      <th width="45vw">
+        <h2>
+          <nobr> L. Avgen & W. Ebing </nobr>
+        </h2>
+      </th>
+      <th width="300px" align="right">
+        <button class="button">
+          <!-- Image: Screen Capture by Desainer Kanan from the Noun Project -->
+          <img src="./components/Images/ScreenCapture.png" alt = "icon" height="40" width="40" align = "center" />
+          <br> <br>
+          <nobr> Screen Capture </nobr>
+        </button>
+         <button class="button">
+          <!-- Image: Screen Capture by Desainer Kanan from the Noun Project -->
+          <img src="./components/Images/QuestionMark.png" alt = "icon" height="40" width="40" align = "center" />
+          <br>
+          <br> Help
+        </button>
+        <div class="rightborder" />
+
+      </th>
+    </table>
+
+    <table  class="tableCenter">
       <tr>
         <th>
-          <keep-alive>
+          <keep-alive width="150px" >
             <left-tool-bar class="left-toolbar" v-on:change-component="SwitchComponent($event)" />
           </keep-alive>
         </th>
-        <th>
-          <keep-alive>
+        <th class="componentplace" ref="printMe">
             <component v-bind:is="component" v-bind:getDataset="averageData" v-on:changed-filters="PassAverageData($event)"/>
-          </keep-alive>
+
+        </th>
+        <th>
+          <div class="rightborder" />
         </th>
       </tr>
     </table>
@@ -21,7 +54,6 @@
 <script>
 // Tool Bars
 import LeftToolBar from './components/LeftToolBar.vue'
-import UpperToolBar from './components/UpperToolBar.vue'
 // Map
 import MapTool from './components/MapTool.vue'
 // Side Tools
@@ -30,12 +62,17 @@ import GeneralInfo from './components/GeneralInfo.vue'
 import Glossary from './components/Glossary.vue'
 import DownloadData from './components/DownloadData.vue'
 import Help from './components/Help.vue'
+import Welcome from './components/Welcome.vue'
+
+import Vue from 'vue';
+import VueHtml2Canvas from 'vue-html2canvas';
+
+Vue.use(VueHtml2Canvas);
 
 export default {
   name: 'app',
   components: {
     // Tool Bars
-    UpperToolBar,
     LeftToolBar,
     // Map
     MapTool,
@@ -45,18 +82,30 @@ export default {
     Glossary,
     DownloadData,
     Help,
+    Welcome,
   },
   data: () => ({
-      component:"FilterAndSort",
-      averageData: []
+      component:"Welcome",
+      averageData: [],
+      value: 30,
   }),
 
   methods: {
+
+    print() {
+      const el = this.$refs.printMe;
+      // add option type to get the image version
+      // if not provided the promise will return 
+      // the canvas.
+      const options = {
+        type: 'dataURL'
+      }
+      this.output = this.$html2canvas(el, options);
+    },
+
     SwitchComponent(componentType) {
       if (this.component != componentType) {
         this.component = componentType;
-      } else {
-        this.component = "MapTool"
       }
       return
     },
@@ -79,20 +128,60 @@ export default {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
+  text-align: left;
   color: white;
   margin: 0px;
-  background-color: rgb(38, 26, 82);
+  background-color:  rgb(25, 17, 54);
   min-height: 100vh;
-  min-width: 100vh;
+  min-width: 100vw;
 }
 
-.header {
-  padding: 60px;
-  text-align: center;
-  background: #1abc9c;
-  color: white;
-  font-size: 30px;
+.componentplace {
+  width: 100%;
+  background-color:  rgb(55, 39, 112);
+  border-style: solid;
+  border-color:  rgb(55, 39, 112);
+  border-width: 100px;
+  border-radius: 10px;
 }
+
+.banner {
+  background-color: rgb(25, 17, 54);
+  text-align: start;
+  color: white;
+  font-size: large;
+  width: 100vw;
+  height: 100px;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  margin-right: auto;
+  
+  /* make the text not selectable*/
+  -moz-user-select: -moz-none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.rightborder {
+  width: 10px;
+  background-color: rgb(25, 17, 54);
+}
+
+.button {
+  outline: none;
+  border: none;
+  height: 80px;
+  width: 120px;
+  color: white;
+  background-color: rgb(25, 17, 54);
+
+}
+.button:hover {
+  background-color: rgb(37, 25, 80);
+  cursor: pointer;
+}
+
 
 </style>

@@ -1,5 +1,6 @@
 <template>
   <div><h1>Help</h1>
+  Dit is de introductie pagina, klik op een knop links
   </div>
 </template>
 

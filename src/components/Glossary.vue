@@ -1,5 +1,16 @@
 <template>
-  <div><h1>Glossary</h1>
+  <div class="tab" width="100%" object-fit="fill">
+    <tr>
+      <th class="title">
+        Glossary
+      </th>
+    </tr>
+    <tr>
+      <th class="normText">
+        Hier komt een heleboel interessante tekst over wat de data inhoudt, mogelijk kan hier ook de legenda aangepast worden.
+        
+      </th>
+    </tr>
   </div>
 </template>
 
@@ -13,18 +24,42 @@ export default {
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h3 {
-  margin: 40px 0 0;
+
+.title {
+  font-size: xxx-large;
+  font-weight: bold;
 }
-ul {
-  list-style-type: none;
-  padding: 0;
+
+.normText {
+  font-weight: normal;
+  font-size: large;
 }
-li {
-  display: inline-block;
-  margin: 0 10px;
+
+.tab {
+  background-color: rgb(55, 39, 112);
+  height: 70vh;
+  width: 100%
 }
-a {
-  color: #42b983;
+
+
+a:link {
+  color: rgb(187, 36, 233);
+  background-color: transparent;
+  text-decoration: none;
 }
+
+a:visited {
+  color: rgb(252, 74, 133);
+  background-color: transparent;
+  text-decoration: none;
+}
+
+a:hover {
+  color: rgb(157, 119, 192);
+  background-color: transparent;
+  text-decoration: underline;
+}
+
+
+
 </style>

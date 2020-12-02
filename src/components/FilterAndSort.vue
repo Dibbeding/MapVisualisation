@@ -1,41 +1,107 @@
 <template>
-  <div class="tab">
-    <div class="title"> Filter & Sort </div>
+  <div class="tab" width="100%" object-fit="fill">
+    <table class="filtertable">
+      <tr>
+        <th class="title">
+          Filter & Sort 
+        </th>
+      </tr>
+      <tr>
+        <th class="normText">
+          Select which data you would like to see by selecting a subject in the form below. <br> {{" "}} <br>
+        </th>
+      </tr>
+      <tr class="listspot">
+        <div class="input-group">
+          <select v-model="selectedItemSet" single class="subjectlist">
+            <option v-for="dataset in datasetList" v-bind:key="dataset.name">
+              {{dataset.name}}
+            </option>
+          </select>
+          <button v-on:click="datasetSelected()" class="filterbuttons">
+            Confirm
+          </button> 
+        </div>
+      </tr>
+
+      <tr>
+        <th class="normText">
+          Select which subsection of the data you would like to see by selecting it in the form below. <br> {{" "}} <br>
+
+        </th>
+      </tr>
+      <tr class="listspot">
+        <div class="input-group">
+          <select v-model="selectedItem" single class="subjectlist">
+            <option v-for="subject in datasetList[selectedItemIndex].subjects" v-bind:key="subject">
+              {{subject}}
+            </option>
+          </select>
+          <button v-on:click="computeAverage()" class="filterbuttons">
+            Confirm
+          </button> 
+        </div>
+      </tr>
+
+      <tr>
+        <th class="smallerTitle">
+          <br>
+          More information
+        </th>
+      </tr>
+      <tr>
+        <th class="normText">
+          Clarifications on how to read the data can be found in the "Glossary"-tab. <br>
+          <br>
+          General information about the used datasets can be found in the "General Info"-tab
+        </th>
+      </tr>
+    </table>
+    <!-- 
     <button v-on:click="ParseData()" class="button">
       Parse
     </button> 
     <button v-on:click="SelectYears()" class="button">
       Years
     </button> 
-    <button v-on:click="computeAverage()" class="button">
-      Average
-    </button> 
+    
     <button v-on:click="applyFilters()" class="button">
       Apply
-    </button> 
+    </button>  -->
   </div>
 </template>
 
 <script>
-import DataSet from './DataFiles/chickenData.json'
+import ChickenData from './DataFiles/chickenData.json'
 import { cloneDeep } from "lodash" // To create actual copies of objects
 //https://www.convertcsv.com/csv-to-json.htm
 
 export default {
   name: 'FilterAndSort',
   data() {
+    
     return {
       fullData: [],
       partialData: [],
       indexSub: 0,
       yearRange: 0,
       curYearRange: 0,
+      selectedItem: "",
+      selectedItemSet: "",
+      selectedItemIndex: 0, // TODO, -1 als begin
+
+      datasetList: [
+        { name: "Live Animals", subjects: ["Chickens","Dogs","Cats"] },
+        { name: "Live Stock", subjects: ["Chickens","Cows","Pigs"] },
+        { name: "Filler", subjects: ["Filler1","Filler2","Filler3"] }
+        ],
     }
   },
 
   created : function() {
       // Turn the JSON into better structered data
       this.parseData;
+      let DataSet = ChickenData
       let oldYear = DataSet[0]["Year"], year;
       let yearData = new Array();
 
@@ -71,9 +137,20 @@ export default {
     this.indexSub;   
     this.yearRange;
     this.curYearRange;
+    this.selectedItem;
   },
 
   methods: {
+
+    datasetSelected() {
+      for (let i = 0; i < this.datasetList.length; i++) {
+        if (this.selectedItemSet == this.datasetList[i].name) {
+          this.selectedItemIndex = i; 
+        }
+      }
+
+      console.log(this.datasetList[this.selectedItemIndex].subjects)
+    },
 
     ParseData() {
       //console.log("fullData: ", this.fullData)
@@ -96,6 +173,12 @@ export default {
     },
 
     computeAverage() {
+      // First select which dataset to use:
+      if (this.selectedItem == "Chickens") {
+          // TODO
+      } else {
+        return;
+      }
 
 
       this.curYearRange = { lowYear: 1990, highYear: 1995 }
@@ -181,6 +264,7 @@ export default {
       }
       //console.log("Average: ", averageData)
       this.$emit('changed-filters', averageData);
+      console.log(this.selectedItem)
     },
 
     applyFilters() {
@@ -191,21 +275,59 @@ export default {
 </script>
 
 <style scoped>
-h1 {
-  margin: 40px 0 0;
-  background-color: lightpink;
-  color:white;
-}
 
 .title {
-  position: center;
-  font-size: x-large;
+  font-size: xxx-large;
+  font-weight: bold;
+}
+
+.smallerTitle {
+  font-size: xx-large;
+  font-weight: bold;
+}
+
+.normText {
+  font-weight: normal;
+  font-size: large;
 }
 
 .tab {
-  background-color: rgb(109, 85, 194);
-  height: 100%;
-  widows: 100%;
+  background-color: rgb(55, 39, 112);
+  height: 70vh;
+  width: 100%;
+}
+
+.buttonspot {
+  height: 50px;
+  width: auto;
+}
+
+.filterbuttons {
+  height: 25px;
+  width: 100px;
+  display: inline-block;
+  margin-left: 10px;
+  
+}
+
+.filterbuttons:hover {
+  cursor: pointer;
+}
+
+.filtertable {
+  width: 100%;
+  /*margin-left: auto;
+  margin-right: auto;*/
+}
+
+.subjectlist {
+  width: 200px;
+  scale: 1;
+}
+
+.listspot {
+  height: 50px;
+  width: 100%;
 }
 
 </style>

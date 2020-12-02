@@ -1,19 +1,38 @@
 <template>
-  <div>
+  <div class="toolbar">
     <button v-on:click="ChangeComponent(1)" class="button">
+      <!-- Image: Filter by Icon Master from the Noun Project -->
+      <img src="./Images/Filter.png" alt = "icon" height="70" width="70" align = "center" />
+      <br> <br>
       Filter & Sort
     </button>
+    <h1 class="whitespace" />
     <button v-on:click="ChangeComponent(2)" class="button">
+      <!-- Image: Line Graph by parkjisun from the Noun Project -->
+      <img src="./Images/Graph.png" alt = "icon" height="70" width="70" align = "center" />
+      <br> <br>
       General Info
     </button>
+    <h1 class="whitespace" />
     <button v-on:click="ChangeComponent(3)" class="button">
+      <!-- Image: Dictionary by Smalllike from the Noun Project -->
+      <img src="./Images/Book.png" alt = "icon" height="70" width="70" align = "center" />
+      <br> <br>
       Glossary
     </button>
+    <h1 class="whitespace" />
     <button v-on:click="ChangeComponent(4)" class="button">
+      <!-- Image: Download by projecthayat from the Noun Project -->
+      <img src="./Images/Download.png" alt = "icon" height="70" width="70" align = "center" />
+      <br> <br>
       Download Data
     </button>
+    <h1 class="whitespace" />
     <button v-on:click="ChangeComponent(5)" class="button">
-      Help
+      <!-- Image: Map by shashank singh from the Noun Project //TODO Goede naam zoeken-->
+      <img src="./Images/Map.png" alt = "icon" height="100" width="100" align = "center" />
+      <br>
+      <br> Map
     </button>
   </div>
 </template>
@@ -52,19 +71,42 @@ export default {
 
 <style scoped>
 
+.whitespace {
+  height: 2.5%;
+}
+
+.toolbar {
+ width: 150px
+}
 
 .button {
   outline: none;
   border: none;
-  min-width: 100px;
-  width: 5vw;
-  height: 19.2vh;
+  width: 80%;
+  height: 18%;
   color: white;
   background-color: rgb(38, 26, 82);
   display:block;
+  border-radius: 10px;
+  margin-left: auto;
+  margin-right: auto;
+
+
+  /* make the text not selectable*/
+  -moz-user-select: -moz-none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 .button:hover,
 .button:focus {
   background-color: rgb(55, 39, 112);
+  cursor: pointer;
+}
+
+.toolbar {
+  height: 88vh;
+  background-color:  rgb(25, 17, 54);
 }
 </style>

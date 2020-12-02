@@ -1,27 +1,46 @@
 <template>
   <div class="container mt-3 mt-sm-5" id="maptool">
-    <div class="row">
-      <div class="col-md-9">
-        <div class="map" id="map"></div>
+    <th class="verticalBorder">
+    </th>
+    <th>
+      <div class="row">
+        <tr class="title">
+          Average amount of {{subject}} per year ({{lowerYear}} - {{higherYear}})
+        </tr>
+        <tr class="dataDescription">
+          {{currentCountry}}: {{Number(currentValue.toFixed(3)).toLocaleString()}} {{subject}} per year
+        </tr>
       </div>
-      <div class="col-md-3">
-        <div
-          class="form-check"
-          v-for="layer in layers"
-          :key="layer.id"
-        >
-          <label class="form-check-label">
-            <input
-              class="form-check-input"
-              type="checkbox"
-              v-model="layer.active"
-              @change="layerChanged(layer.id, layer.active)"
-            />
-            
-          </label>
+      <div class="row">
+        <div class="col-md-8">
+          <div class="map" id="map"></div>
+        </div>
+        <div class="col-md-2">
+          <div
+            class="form-check"
+            v-for="layer in layers"
+            :key="layer.id"
+          >
+            <label class="form-check-label">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                v-model="layer.active"
+                @change="layerChanged(layer.id, layer.active)"
+              />
+              
+            </label>
+          </div>
         </div>
       </div>
-    </div>
+      <div class="row">
+        <div class="timeline">
+          Help
+        </div>
+      </div>
+    </th>
+    <th class="verticalBorder">
+    </th>
   </div>
 </template>
 
@@ -29,11 +48,15 @@
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
-var geojson
 
+var geojson
 
 export default {
   name: 'map-tool',
+
+  components: {
+
+  },
 
   props: {
     getDataset: {type: Array}
@@ -42,7 +65,12 @@ export default {
   data() {
     return {
       layers: [],
-      neededData: this.getDataset
+      neededData: this.getDataset,
+      subject: "Chickens",
+      lowerYear: 1961,
+      higherYear: 2018,
+      currentCountry: "",
+      currentValue: 0,
     }
   },
 
@@ -55,28 +83,51 @@ export default {
 
   methods: {
 
-
     onEachFeature(feature, layer) {
       let value = "N/A"
       for (let index = 0; index < this.neededData.length; index++) {
         if (this.neededData[index].Country == feature.properties.name) { 
           value = this.neededData[index].Value 
+          value = Number(value.toFixed(3)).toLocaleString();
           break;
         }
       }
 
       layer.bindPopup(feature.properties.name + ": " + value);
-      
+
+      this.map.on({
+        moveend: this.checkZoom,
+      });
+
       layer.on({
+        drag: this.panInsideBounds,
         mouseover: this.highlightFeature,
         mouseout: this.resetHighlight,
-        click: this.zoomToFeature
+        click: this.zoomToFeature,
+       
       });
+  
+      if (this.map.Zoom < 3) { this.map.setZoom(3); }
+    },
+
+    checkZoom() {
+      console.log(this.map._zoom)
+      let minZoom = 1.75, 
+          MaxZoom = 7
+      if      (this.map._zoom > MaxZoom) { this.map.setZoom(MaxZoom); }
+      else if (this.map._zoom < minZoom) { this.map.setZoom(minZoom); }
+    },
+    
+    panInsideBounds() {
+      var southWest = L.latLng(-89.98155760646617, -180),
+      northEast = L.latLng(89.99346179538875, 180);
+      var bounds = L.latLngBounds(southWest, northEast);
+      this.map.panInsideBounds(bounds, { animate: false });
     },
 
     highlightFeature(e) {
       let layer = e.target;
-      console.log("dataset: ", this.neededData)
+      //console.log("dataset: ", this.neededData)
       layer.setStyle({
         weight: 7,
         color: 'white', //'#A9A9A9',
@@ -84,6 +135,16 @@ export default {
         dashArray: '8',
         fillOpacity: 0.7
       });
+
+      for (let index = 0; index < this.neededData.length; index++) {
+        if (this.neededData[index].Country == layer.feature.properties.name) { 
+          let value = this.neededData[index].Value 
+          this.currentValue = Number((value).toFixed(3));
+          break;
+        }
+      }
+
+      this.currentCountry = layer.feature.properties.name
 
       //layer.openPopup();
 
@@ -137,8 +198,8 @@ export default {
 
     getColorPopulation(name) {
       let value = -1
-      console.log("Name to find: ", name)
-      console.log("dataset: ", this.neededData)
+      //console.log("Name to find: ", name)
+      //console.log("dataset: ", this.neededData)
       
       for (let index = 0; index < this.neededData.length; index++) {
         if (this.neededData[index].Country == name) { 
@@ -200,18 +261,28 @@ export default {
       }
 
       //this.myGeoJSONPath = './geoData.geo.json'
-      this.map = L.map('map').setView([20, -10], 3);
+      this.map = L.map('map').setView([20, -10], 2, {
+        MaxZoom: 2,
+        MinZoom: 2,
+        Zoom: 2
+      });
 
       L.tileLayer('https://api.mapbox.com/styles/v1/dibbeding/ckhche3qk1h1819pdfxrc1784/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiZGliYmVkaW5nIiwiYSI6ImNraGJ2ZGNhcjAzcXEyc21rbzZneWRycGIifQ._yBMxhMElmLb1L7ouky6kg', {
           //id: 'ckhche3qk1h1819pdfxrc1784',
           tileSize: 512,
           zoomOffset: -1,
-          MaxZoom: 10,
-          Minzoom: 18,
+          MaxZoom: 2,
+          Minzoom: 2,
           Zoom: 2,
           zoomDelta: 0.25,
-          zoomSnap: 0
+          zoomSnap: 1,
       }).addTo(this.map);
+
+      var southWest = L.latLng(-89.98155760646617, -180),
+      northEast = L.latLng(89.99346179538875, 180);
+      var bounds = L.latLngBounds(southWest, northEast);
+
+      this.map.setMaxBounds(bounds);
 
       geojson = L.geoJSON(nAmericaData, {
         style: this.style,
@@ -247,18 +318,33 @@ export default {
 
 <style scoped>
 .map { 
-  height: 95vh;
-  width: 95vw;
+  height: 60vh;
+  width: 50vw;
 }
 
-.text-block {
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
-  background-color: black;
-  color: white;
-  padding-left: 20px;
-  padding-right: 20px;
+.timeline {
+  height: 3%;
+  width: 100%;
+}
+
+.title {
+  height: 8%;
+  width: 100%;
+  font-size: x-large;
+  font-weight: bold;
+}
+
+.dataDescription {
+  font-size: large;
+  font-weight: normal;
+  height: 50px;
+}
+
+.verticalBorder {
+  width: 50%;
+  height: 100%;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 </style>

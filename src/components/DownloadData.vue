@@ -1,5 +1,17 @@
 <template>
-  <div><h1>Download Data</h1>
+  <div class="tab" width="100%" object-fit="fill">
+    <tr>
+      <th class="title">
+        Download Data
+      </th>
+    </tr>
+    <tr>
+      <th class="normText">
+         This page is meant to contain a way to select a dataset from the ones contained in the program.
+         This function is currently not supported.
+        
+      </th>
+    </tr>
   </div>
 </template>
 
@@ -13,18 +25,42 @@ export default {
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h3 {
-  margin: 40px 0 0;
+
+.title {
+  font-size: xxx-large;
+  font-weight: bold;
 }
-ul {
-  list-style-type: none;
-  padding: 0;
+
+.normText {
+  font-weight: normal;
+  font-size: large;
 }
-li {
-  display: inline-block;
-  margin: 0 10px;
+
+.tab {
+  background-color: rgb(55, 39, 112);
+  height: 70vh;
+  width: 100%
 }
-a {
-  color: #42b983;
+
+
+a:link {
+  color: rgb(187, 36, 233);
+  background-color: transparent;
+  text-decoration: none;
 }
+
+a:visited {
+  color: rgb(252, 74, 133);
+  background-color: transparent;
+  text-decoration: none;
+}
+
+a:hover {
+  color: rgb(157, 119, 192);
+  background-color: transparent;
+  text-decoration: underline;
+}
+
+
+
 </style>
