@@ -2,13 +2,12 @@
   <div class="tab" width="100%" object-fit="fill">
     <tr>
       <th class="title">
-        Glossary
+         Warning
       </th>
     </tr>
     <tr>
       <th class="normText">
-        At the moment this function is'nt supported.
-        
+        Before going to the map, data needs to be selected within the Filter & Sort tab.
       </th>
     </tr>
   </div>
@@ -16,7 +15,7 @@
 
 <script>
 export default {
-  name: 'Glossary',
+  name: 'MapWarning',
   props: {
     msg: String
   }

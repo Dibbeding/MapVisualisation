@@ -13,14 +13,11 @@
       </tr>
       <tr class="listspot">
         <div class="input-group">
-          <select v-model="selectedItemSet" single class="subjectlist">
+          <select v-model="selectedItemSet" single class="subjectlist" @change="onSelectItemSet()">
             <option v-for="dataset in datasetList" v-bind:key="dataset.name">
               {{dataset.name}}
             </option>
           </select>
-          <button v-on:click="datasetSelected()" class="filterbuttons">
-            Confirm
-          </button> 
         </div>
       </tr>
 
@@ -32,16 +29,22 @@
       </tr>
       <tr class="listspot">
         <div class="input-group">
-          <select v-model="selectedItem" single class="subjectlist">
+          <select v-model="selectedItem" single class="subjectlist" @change="onSelectItem($event)">
             <option v-for="subject in datasetList[selectedItemIndex].subjects" v-bind:key="subject">
               {{subject}}
             </option>
           </select>
-          <button v-on:click="computeAverage()" class="filterbuttons">
-            Confirm
-          </button> 
         </div>
       </tr>
+      <tr>
+        <th class="normText">
+           Select a range of years:
+          <br> {{" "}} <br>
+        </th>
+      </tr>
+
+
+
 
       <tr>
         <th class="smallerTitle">
@@ -49,6 +52,7 @@
           More information
         </th>
       </tr>
+
       <tr>
         <th class="normText">
           Clarifications on how to read the data can be found in the "Glossary"-tab. <br>
@@ -56,23 +60,40 @@
           General information about the used datasets can be found in the "General Info"-tab
         </th>
       </tr>
+
+      <tr class="listspot">
+        <div class="input-group">
+          <select v-model="lowerYear" single class="yearList" @change="onSelectLowYear($event)">
+            <option v-for="year in fullDataYearsLow" v-bind:key="year">
+              {{ year }}
+            </option>
+          </select>
+
+          {{"  "}}
+
+          <select v-model="higherYear" single class="yearList" @change="onSelectHighYear($event)">
+            <option v-for="year in fullDataYearsHigh" v-bind:key="year">
+              {{ year }}
+            </option>
+          </select>
+        </div>
+      </tr>
+
+      <tr class="normText">
+        <button v-on:click="onComputeFilters()">
+          Compute
+        </button>
+      </tr>
     </table>
-    <!-- 
-    <button v-on:click="ParseData()" class="button">
-      Parse
-    </button> 
-    <button v-on:click="SelectYears()" class="button">
-      Years
-    </button> 
-    
-    <button v-on:click="applyFilters()" class="button">
-      Apply
-    </button>  -->
+
+
+
   </div>
 </template>
 
 <script>
 import ChickenData from './DataFiles/chickenData.json'
+//import pigData from './DataFiles/pigData.json'
 import { cloneDeep } from "lodash" // To create actual copies of objects
 //https://www.convertcsv.com/csv-to-json.htm
 
@@ -83,16 +104,21 @@ export default {
     return {
       fullData: [],
       partialData: [],
+      fullDataYears: [],
+      fullDataYearsLow: [],
+      fullDataYearsHigh: [],
       indexSub: 0,
       yearRange: 0,
-      curYearRange: 0,
+      curYearRange: {lowYear: 0, highYear: 0},
+      lowerYear: 0,
+      higherYear: 0,
       selectedItem: "",
       selectedItemSet: "",
       selectedItemIndex: 0, // TODO, -1 als begin
 
       datasetList: [
-        { name: "Live Animals", subjects: ["Chickens","Dogs","Cats"] },
-        { name: "Live Stock", subjects: ["Chickens","Cows","Pigs"] },
+        { name: "Live Animals", subjects: ["Chickens","Dogs","Pigs"] },
+        { name: "Live Stock", subjects: ["Horses","Cows","Camels"] },
         { name: "Filler", subjects: ["Filler1","Filler2","Filler3"] }
         ],
     }
@@ -127,6 +153,9 @@ export default {
       this.fullData.push({Year: yearData})
 
       // Set year range for selecting
+      this.fullDataYearsLow = this.fullDataYears
+      this.fullDataYearsHigh = this.fullDataYears
+
       this.yearRange = { lowestYear: this.indexSub, highestYear: (this.indexSub + this.fullData.length) }
       //console.log("Check fullData in created: ", this.fullData)
   },
@@ -138,11 +167,49 @@ export default {
     this.yearRange;
     this.curYearRange;
     this.selectedItem;
+    this.updateLowYears;
+    this.updateHighYears;
   },
 
   methods: {
 
-    datasetSelected() {
+    onComputeFilters() {
+      this.computeAverage()
+    },
+
+    onSelectLowYear(event) {
+      this.curYearRange.lowYear = event.target.value
+      this.updateHighYears(event.target.value)
+    },
+
+    onSelectHighYear(event) {
+      this.curYearRange.highYear = event.target.value
+      this.updateLowYears(event.target.value)
+    },
+
+    updateLowYears(year) {
+      this.fullDataYearsLow = cloneDeep(this.fullDataYears)
+      for (let i = this.fullDataYears.length; i >= 0; i--) {
+        if (this.fullDataYears[i] > year) { this.fullDataYearsLow.splice(i, 1) }
+      }
+
+    },
+
+    updateHighYears(year) {
+      this.fullDataYearsHigh = cloneDeep(this.fullDataYears)
+      for (let i = this.fullDataYears.length; i >= 0; i--) {
+        if (this.fullDataYears[i] < year) { this.fullDataYearsHigh.splice(i, 1) }
+      }
+    },
+
+    onSelectItem(event) {
+      this.selectedItem = event.target.value
+      for (let i = 0; i < this.fullData.length; i++) {
+        this.fullDataYears[i] = i + this.indexSub
+      }
+    },
+
+    onSelectItemSet() {
       for (let i = 0; i < this.datasetList.length; i++) {
         if (this.selectedItemSet == this.datasetList[i].name) {
           this.selectedItemIndex = i; 
@@ -164,7 +231,6 @@ export default {
       while (this.partialData.length > 0) { this.partialData.pop() }
       
       // Only put needed years in this object
-      this.curYearRange = { lowYear: 1961, highYear: 1962 } // TODO make selectable
       for (let index = this.curYearRange.lowYear; index <= this.curYearRange.highYear; index++) {
         this.partialData.push(this.fullData[index - this.indexSub])
       }
@@ -176,12 +242,12 @@ export default {
       // First select which dataset to use:
       if (this.selectedItem == "Chickens") {
           // TODO
+      } else if (this.selectedItem == "Pigs") {
+        //this.fullData = pigData;
       } else {
         return;
       }
 
-
-      this.curYearRange = { lowYear: 1990, highYear: 1995 }
       //console.log("Check fullData in computeAverage: ", this.fullData)
 
       // Find the year with the most countries to use as a basis
@@ -263,7 +329,7 @@ export default {
         averageData[indexCountry].Value /= averageDivider[indexCountry]
       }
       //console.log("Average: ", averageData)
-      this.$emit('changed-filters', averageData);
+      this.$emit('changed-filters', {data: averageData, years: this.curYearRange });
       console.log(this.selectedItem)
     },
 
@@ -325,9 +391,15 @@ export default {
   scale: 1;
 }
 
+.yearlist {
+  width: 250px;
+  scale: 1;
+}
+
 .listspot {
   height: 50px;
   width: 100%;
 }
+
 
 </style>

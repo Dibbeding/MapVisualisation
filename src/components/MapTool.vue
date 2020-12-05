@@ -5,7 +5,7 @@
     <th>
       <div class="row">
         <tr class="title">
-          Average amount of {{subject}} per year ({{lowerYear}} - {{higherYear}})
+          Average amount of {{subject}} per year ({{curYearRange.lowYear}} - {{curYearRange.highYear}})
         </tr>
         <tr class="dataDescription">
           {{currentCountry}}: {{Number(currentValue.toFixed(3)).toLocaleString()}} {{subject}} per year
@@ -15,7 +15,7 @@
         <div class="col-md-8">
           <div class="map" id="map"></div>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-2">g
           <div
             class="form-check"
             v-for="layer in layers"
@@ -35,7 +35,6 @@
       </div>
       <div class="row">
         <div class="timeline">
-          Help
         </div>
       </div>
     </th>
@@ -59,22 +58,23 @@ export default {
   },
 
   props: {
-    getDataset: {type: Array}
+    getDataset: {type: Array},
   },
 
   data() {
+    
     return {
       layers: [],
-      neededData: this.getDataset,
+      neededData: this.getDataset.data,
+      curYearRange: this.getDataset.years,
       subject: "Chickens",
-      lowerYear: 1961,
-      higherYear: 2018,
       currentCountry: "",
       currentValue: 0,
     }
   },
 
   created() {
+    console.log(this.getDataset)
   },
 
   mounted() {
@@ -93,7 +93,7 @@ export default {
         }
       }
 
-      layer.bindPopup(feature.properties.name + ": " + value);
+      //layer.bindPopup(feature.properties.name + ": " + value);
 
       this.map.on({
         moveend: this.checkZoom,
@@ -145,8 +145,7 @@ export default {
       }
 
       this.currentCountry = layer.feature.properties.name
-
-      //layer.openPopup();
+      //layer.bindPopup(layer.feature.properties.name + ": " + this.currentValue);
 
       /*if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
         layer.bringToFront();
@@ -214,13 +213,16 @@ export default {
         colour4 = '#BD8026', 
         colour5 = '#BD4026', 
         colour6 = '#BD2026',
+        colour7 = '#BD0026',
           limit1 = 0, 
           limit2 = 100, 
           limit3 = 500, 
           limit4 = 5000, 
           limit5 = 15000, 
-          limit6 = 50000
-    return value > limit6  ? colour6 :
+          limit6 = 50000,
+          limit7 = 100000
+    return value > limit7  ? colour7 :
+           value > limit6  ? colour6 :
            value > limit5  ? colour5 :
            value > limit4  ? colour4 :
            value > limit3  ? colour3 :
@@ -262,6 +264,7 @@ export default {
 
       //this.myGeoJSONPath = './geoData.geo.json'
       this.map = L.map('map').setView([20, -10], 2, {
+        renderer: L.canvas(),
         MaxZoom: 2,
         MinZoom: 2,
         Zoom: 2
@@ -269,6 +272,7 @@ export default {
 
       L.tileLayer('https://api.mapbox.com/styles/v1/dibbeding/ckhche3qk1h1819pdfxrc1784/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiZGliYmVkaW5nIiwiYSI6ImNraGJ2ZGNhcjAzcXEyc21rbzZneWRycGIifQ._yBMxhMElmLb1L7ouky6kg', {
           //id: 'ckhche3qk1h1819pdfxrc1784',
+          renderer: L.canvas(),
           tileSize: 512,
           zoomOffset: -1,
           MaxZoom: 2,

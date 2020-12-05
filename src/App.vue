@@ -14,14 +14,14 @@
           <nobr> L. Avgen & W. Ebing </nobr>
         </h2>
       </th>
-      <th width="300px" align="right">
-        <button class="button">
+      <th width="300px" align="right" >
+        <button class="button" v-on:click="screenShot()">
           <!-- Image: Screen Capture by Desainer Kanan from the Noun Project -->
           <img src="./components/Images/ScreenCapture.png" alt = "icon" height="40" width="40" align = "center" />
           <br> <br>
           <nobr> Screen Capture </nobr>
         </button>
-         <button class="button">
+         <button class="button" v-on:click="SwitchComponent('Help')">
           <!-- Image: Screen Capture by Desainer Kanan from the Noun Project -->
           <img src="./components/Images/QuestionMark.png" alt = "icon" height="40" width="40" align = "center" />
           <br>
@@ -39,7 +39,7 @@
             <left-tool-bar class="left-toolbar" v-on:change-component="SwitchComponent($event)" />
           </keep-alive>
         </th>
-        <th class="componentplace" ref="printMe">
+        <th class="componentplace" ref="screen">
             <component v-bind:is="component" v-bind:getDataset="averageData" v-on:changed-filters="PassAverageData($event)"/>
 
         </th>
@@ -63,11 +63,10 @@ import Glossary from './components/Glossary.vue'
 import DownloadData from './components/DownloadData.vue'
 import Help from './components/Help.vue'
 import Welcome from './components/Welcome.vue'
+import MapWarning from './components/MapWarning.vue'
 
-import Vue from 'vue';
-import VueHtml2Canvas from 'vue-html2canvas';
+import html2canvas from 'html2canvas';
 
-Vue.use(VueHtml2Canvas);
 
 export default {
   name: 'app',
@@ -90,20 +89,41 @@ export default {
       value: 30,
   }),
 
-  methods: {
+    methods: {
+    screenShot () {
+      console.log("Probeer the screenshotten")
+      html2canvas(this.$refs.screen, { backgroundColor: '#FFFFFF', useCORS: true }).then((canvas) => {
+        if (navigator.msSaveBlob) { // IE10+ 
+          let blob = canvas.msToBlob(); 
+          return navigator.msSaveBlob(blob, name); 
+        } else {
+          let imageurl = canvas.toDataURL('image/png')
+          //You need to choose the naming rules yourself
+          let imagename = "name"
+          this.fileDownload(imageurl, imagename)
+        }
+      })
+    },
 
-    print() {
-      const el = this.$refs.printMe;
-      // add option type to get the image version
-      // if not provided the promise will return 
-      // the canvas.
-      const options = {
-        type: 'dataURL'
-      }
-      this.output = this.$html2canvas(el, options);
+    //Download screenshot pictures
+    fileDownload(downloadUrl, downloadName) {
+      let aLink = document.createElement("a");
+      aLink.style.display = "none";
+      aLink.href = downloadUrl;
+      aLink.download = `${downloadName}.png`;
+      // Trigger click-then remove
+      document.body.appendChild(aLink);
+      aLink.click();
+      document.body.removeChild(aLink);
     },
 
     SwitchComponent(componentType) {
+      console.log(this.averageData.length)
+      if (componentType == "MapTool" && this.averageData.length == 0) {
+        this.component = MapWarning
+        return
+      }
+
       if (this.component != componentType) {
         this.component = componentType;
       }
