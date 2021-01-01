@@ -330,9 +330,12 @@ export default {
       }
       //console.log("Average: ", averageData)
       this.$emit('changed-filters', {data: averageData, years: this.curYearRange });
+      let component = "Map"
+      console.log("Ga emitten gozer")
+      this.$emit('change-component', component );
+
       console.log(this.selectedItem)
     },
-
     applyFilters() {
       
     },

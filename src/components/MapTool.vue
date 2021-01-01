@@ -3,7 +3,27 @@
     <th class="verticalBorder">
     </th>
     <th>
+
+        <div v-if="isLoading == 1">
+        <button class="button" v-on:click="screenShot()">
+          <!-- Image: Screen Capture by Desainer Kanan from the Noun Project -->
+          <img src="./Images/ScreenCapture.png" alt = "icon" height="40" width="40" align = "center" />
+          <br> <br>
+          <nobr> Screen Capture </nobr>
+        </button> 
+        </div>  
+        <div v-else-if="isLoading == 0">   
+        <button class="button">
+          <!-- Image: Screen Capture by Desainer Kanan from the Noun Project -->
+          <img src="./Images/ScreenCapture.png" alt = "icon" height="40" width="40" align = "center" />
+          <br> <br>
+
+        </button> 
+        </div>
+        
       <div class="row">
+
+
         <tr class="title">
           Average amount of {{subject}} per year ({{curYearRange.lowYear}} - {{curYearRange.highYear}})
         </tr>
@@ -13,7 +33,7 @@
       </div>
       <div class="row">
         <div class="col-md-8">
-          <div class="map" id="map"></div>
+          <div class="map" id="map" ref="screen"></div>
         </div>
         <div class="col-md-2">g
           <div
@@ -46,9 +66,11 @@
 <script>
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-
+import html2canvas from 'html2canvas';
 
 var geojson
+
+const screenshotSound = require("./Sounds/screenshot.mp3");
 
 export default {
   name: 'map-tool',
@@ -70,6 +92,7 @@ export default {
       subject: "Chickens",
       currentCountry: "",
       currentValue: 0,
+      isLoading: 1,
     }
   },
 
@@ -82,6 +105,39 @@ export default {
   },
 
   methods: {
+
+    screenShot () {
+      this.isLoading = 0;
+
+      let audio = new Audio(screenshotSound); // path to file
+      audio.play();
+
+      html2canvas(this.$refs.screen, { backgroundColor: '#FFFFFF', useCORS: true }).then((canvas) => {
+        if (navigator.msSaveBlob) { // IE10+ 
+          let blob = canvas.msToBlob(); 
+          return navigator.msSaveBlob(blob, name); 
+        } else {
+          let imageurl = canvas.toDataURL('image/png')
+          //You need to choose the naming rules yourself
+          let imagename = this.subject + "_" + this.curYearRange.lowYear + "-" + this.curYearRange.highYear;
+          this.fileDownload(imageurl, imagename)
+          this.isLoading = 1;
+        }
+      })
+
+    },
+
+    //Download screenshot pictures
+    fileDownload(downloadUrl, downloadName) {
+      let aLink = document.createElement("a");
+      aLink.style.display = "none";
+      aLink.href = downloadUrl;
+      aLink.download = `${downloadName}.png`;
+      // Trigger click-then remove
+      document.body.appendChild(aLink);
+      aLink.click();
+      document.body.removeChild(aLink);
+    },
 
     onEachFeature(feature, layer) {
       let value = "N/A"
