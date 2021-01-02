@@ -3,23 +3,6 @@
     <th class="verticalBorder">
     </th>
     <th>
-
-        <div v-if="isLoading == 1">
-        <button class="button" v-on:click="screenShot()">
-          <!-- Image: Screen Capture by Desainer Kanan from the Noun Project -->
-          <img src="./Images/ScreenCapture.png" alt = "icon" height="40" width="40" align = "center" />
-          <br> <br>
-          <nobr> Screen Capture </nobr>
-        </button> 
-        </div>  
-        <div v-else-if="isLoading == 0">   
-        <button class="button">
-          <!-- Image: Screen Capture by Desainer Kanan from the Noun Project -->
-          <img src="./Images/ScreenCapture.png" alt = "icon" height="40" width="40" align = "center" />
-          <br> <br>
-
-        </button> 
-        </div>
         
       <div class="row">
 
@@ -35,7 +18,7 @@
         <div class="col-md-8">
           <div class="map" id="map" ref="screen"></div>
         </div>
-        <div class="col-md-2">g
+        <div class="col-md-2">
           <div
             class="form-check"
             v-for="layer in layers"
@@ -54,7 +37,21 @@
         </div>
       </div>
       <div class="row">
-        <div class="timeline">
+                <div v-if="isLoading == 1">
+        <button class="button" v-on:click="screenShot()">
+          <!-- Image: Screen Capture by Desainer Kanan from the Noun Project -->
+          <img src="./Images/ScreenCapture.png" alt = "icon" height="40" width="40" align = "center" />
+          <br> <br>
+          <nobr> Screen Capture </nobr>
+        </button> 
+        </div>  
+        <div v-else-if="isLoading == 0">   
+        <button class="button">
+          <!-- Image: Screen Capture by Desainer Kanan from the Noun Project -->
+          <img src="./Images/ScreenCapture.png" alt = "icon" height="40" width="40" align = "center" />
+          <br> <br>
+
+        </button> 
         </div>
       </div>
     </th>
@@ -89,7 +86,7 @@ export default {
       layers: [],
       neededData: this.getDataset.data,
       curYearRange: this.getDataset.years,
-      subject: "Chickens",
+      subject: this.getDataset.subject,
       currentCountry: "",
       currentValue: 0,
       isLoading: 1,
@@ -119,7 +116,7 @@ export default {
         } else {
           let imageurl = canvas.toDataURL('image/png')
           //You need to choose the naming rules yourself
-          let imagename = this.subject + "_" + this.curYearRange.lowYear + "-" + this.curYearRange.highYear;
+          let imagename = this.subject + "(" + this.curYearRange.lowYear + "-" + this.curYearRange.highYear + ")";
           this.fileDownload(imageurl, imagename)
           this.isLoading = 1;
         }
@@ -407,4 +404,31 @@ export default {
   margin-right: auto;
 }
 
+.button {
+  outline: none;
+  border: none;
+  width: 100%;
+  height: 18%;
+  color: white;
+  background-color: rgb(38, 26, 82);
+  display:block;
+  border-radius: 10px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 10px;
+  padding: 10px;
+
+
+  /* make the text not selectable*/
+  -moz-user-select: -moz-none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.button:hover,
+.button:focus {
+  background-color: rgb(46, 33, 94);
+  cursor: pointer;
+}
 </style>

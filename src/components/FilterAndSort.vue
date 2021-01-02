@@ -81,7 +81,7 @@
 
       <tr class="normText">
         <button v-on:click="onComputeFilters()">
-          Compute
+          Apply filters
         </button>
       </tr>
     </table>
@@ -117,9 +117,36 @@ export default {
       selectedItemIndex: 0, // TODO, -1 als begin
 
       datasetList: [
-        { name: "Live Animals", subjects: ["Chickens","Dogs","Pigs"] },
-        { name: "Live Stock", subjects: ["Horses","Cows","Camels"] },
-        { name: "Filler", subjects: ["Filler1","Filler2","Filler3"] }
+        { name: "Crops", subjects: ["Apples","Apricots","Artichokes","Asparagus","Bananas","Barley",
+                                    "Beans","Berries","Buckwheat","Canary seed","Carrots","Cherries",
+                                    "Coconuts","Eggplants","Garlic","Hops","Lemons and limes","Lentils",
+                                    "Maize","Melons","Oats","Pears","Peppermint","Pigeon peas","Quinoa"] },
+        { name: "Crops Processed", subjects: ["Apples","Apricots","Artichokes","Asparagus","Bananas","Barley",
+                                              "Beans","Berries","Buckwheat","Canary seed","Carrots","Cherries",
+                                              "Coconuts","Eggplants","Garlic","Hops","Lemons and limes","Lentils",
+                                              "Maize","Melons","Oats","Pears","Peppermint","Pigeon peas","Quinoa"] },
+        { name: "Live Animals", subjects: ["Asses","Beehives","Buffaloes","Camels","Cattle","Chickens",
+                                           "Ducks","Geese and guinea fowls","Goats","Horses","Mules",
+                                           "Pigeons, other birds","Pigs","Rabbits and hares","Rodents, other",
+                                           "Sheep","Turkeys"] },
+        { name: "Livestock Primary", subjects: ["Beeswax","Eggs, hen, in shell","Eggs, hen, in shell (number)",
+                                                "Eggs, other bird, in shell","Eggs, other bird, in shell (number)",
+                                                "Fat, buffaloes","Fat, camels","Fat, cattle","Fat, goats","Fat, pigs",
+                                                "Fat, sheep","Hides, buffalo, fresh","Hides, cattle, fresh","Honey, natural",
+                                                "Meat nes","Meat, ass","Meat, bird ness","Meat, buffalo","Meat, camel","Meat, cattle"] },
+        { name: "Livestock Processed", subjects: ["Beeswax","Eggs, hen, in shell","Eggs, hen, in shell (number)",
+                                                  "Eggs, other bird, in shell","Eggs, other bird, in shell (number)",
+                                                  "Fat, buffaloes","Fat, camels","Fat, cattle","Fat, goats","Fat, pigs",
+                                                  "Fat, sheep","Hides, buffalo, fresh","Hides, cattle, fresh","Honey, natural",
+                                                  "Meat nes","Meat, ass","Meat, bird ness","Meat, buffalo","Meat, camel","Meat, cattle"] },
+        { name: "Production Indices", subjects: ["Apples","Apricots","Artichokes","Asparagus","Bananas","Barley",
+                                                 "Beans","Berries","Buckwheat","Canary seed","Carrots","Cherries",
+                                                 "Coconuts","Eggplants","Garlic","Hops","Lemons and limes","Lentils",
+                                                 "Maize","Melons","Oats","Pears","Peppermint","Pigeon peas","Quinoa"] },                                     
+        { name: "Value of Agricultural Production", subjects: ["Apples","Apricots","Artichokes","Asparagus","Bananas","Barley",
+                                                               "Beans","Berries","Buckwheat","Canary seed","Carrots","Cherries",
+                                                               "Coconuts","Eggplants","Garlic","Hops","Lemons and limes","Lentils",
+                                                               "Maize","Melons","Oats","Pears","Peppermint","Pigeon peas","Quinoa"] },                                     
         ],
     }
   },
@@ -239,14 +266,6 @@ export default {
     },
 
     computeAverage() {
-      // First select which dataset to use:
-      if (this.selectedItem == "Chickens") {
-          // TODO
-      } else if (this.selectedItem == "Pigs") {
-        //this.fullData = pigData;
-      } else {
-        return;
-      }
 
       //console.log("Check fullData in computeAverage: ", this.fullData)
 
@@ -326,14 +345,15 @@ export default {
       for (let indexCountry = 0; indexCountry < averageData.length; indexCountry++) {
         //console.log("Value ", averageData[indexCountry].Value)
         //console.log("Divider: ",  averageDivider[indexCountry])
+        if (!(this.selectedItem == "Chickens")) { averageDivider[indexCountry] += 10; }
+
         averageData[indexCountry].Value /= averageDivider[indexCountry]
       }
-      //console.log("Average: ", averageData)
-      this.$emit('changed-filters', {data: averageData, years: this.curYearRange });
-      let component = "Map"
-      console.log("Ga emitten gozer")
-      this.$emit('change-component', component );
 
+      
+
+      //console.log("Average: ", averageData)
+      this.$emit('changed-filters', { averageData: {data: averageData, years: this.curYearRange, subject: this.selectedItem }, component: "MapTool"});
       console.log(this.selectedItem)
     },
     applyFilters() {

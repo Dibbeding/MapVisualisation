@@ -35,8 +35,12 @@
           </keep-alive>
         </th>
         <th class="componentplace">
-            <component v-bind:is="component" v-bind:getDataset="averageData" v-on:changed-component="SwitchComponent($event)" v-on:changed-filters="PassAverageData($event)"/>
-
+          <keep-alive v-if="checkIfNeedToBeAlive()">
+            <component v-bind:is="component" v-bind:getDataset="averageData" v-on:changed-filters="PassAverageData($event)"/>
+          </keep-alive>
+          <div v-else>
+            <component v-bind:is="component" v-bind:getDataset="averageData" v-on:changed-filters="PassAverageData($event)"/>
+          </div>
         </th>
         <th>
           <div class="rightborder" />
@@ -86,6 +90,11 @@ export default {
 
     methods: {
     
+    checkIfNeedToBeAlive() {
+      if (this.component == "FilterAndSort") return true
+
+      return false
+    },
 
     SwitchComponent(componentType) {
       console.log("Componenttype switch met: ", componentType)
@@ -100,9 +109,10 @@ export default {
       return
     },
 
-    PassAverageData(averageData) {
-        console.log("Data in de app ", averageData)
-        this.averageData = averageData
+    PassAverageData(dataPackage) {
+        console.log("Data in de app ", dataPackage)
+        this.averageData = dataPackage.averageData
+        this.component = dataPackage.component
     }
   }
 }
