@@ -43,6 +43,23 @@
         </th>
       </tr>
 
+      <tr class="listspot">
+        <div class="input-group">
+          <select v-model="lowerYear" single class="yearList" @change="onSelectLowYear($event)">
+            <option v-for="year in fullDataYearsLow" v-bind:key="year">
+              {{ year }}
+            </option>
+          </select>
+
+          {{"  "}}
+
+          <select v-model="higherYear" single class="yearList" @change="onSelectHighYear($event)">
+            <option v-for="year in fullDataYearsHigh" v-bind:key="year">
+              {{ year }}
+            </option>
+          </select>
+        </div>
+      </tr>
 
 
 
@@ -61,23 +78,6 @@
         </th>
       </tr>
 
-      <tr class="listspot">
-        <div class="input-group">
-          <select v-model="lowerYear" single class="yearList" @change="onSelectLowYear($event)">
-            <option v-for="year in fullDataYearsLow" v-bind:key="year">
-              {{ year }}
-            </option>
-          </select>
-
-          {{"  "}}
-
-          <select v-model="higherYear" single class="yearList" @change="onSelectHighYear($event)">
-            <option v-for="year in fullDataYearsHigh" v-bind:key="year">
-              {{ year }}
-            </option>
-          </select>
-        </div>
-      </tr>
 
       <tr class="normText">
         <button v-on:click="onComputeFilters()">
