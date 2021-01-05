@@ -37,21 +37,35 @@
         </div>
       </div>
       <div class="row">
-                <div v-if="isLoading == 1">
-        <button class="button" v-on:click="screenShot()">
-          <!-- Image: Screen Capture by Desainer Kanan from the Noun Project -->
-          <img src="./Images/ScreenCapture.png" alt = "icon" height="40" width="40" align = "center" />
-          <br> <br>
-          <nobr> Screen Capture </nobr>
-        </button> 
-        </div>  
-        <div v-else-if="isLoading == 0">   
-        <button class="button">
-          <!-- Image: Screen Capture by Desainer Kanan from the Noun Project -->
-          <img src="./Images/ScreenCapture.png" alt = "icon" height="40" width="40" align = "center" />
-          <br> <br>
+        <div class="col-md-4">
+          <div v-if="isLoading == 1">
+            <button class="button" v-on:click="screenShot()">
+              <!-- Image: Screen Capture by Desainer Kanan from the Noun Project -->
+              <img src="./Images/ScreenCapture.png" alt = "icon" height="40" width="40" align = "center" />
+              <br> <br>
+              <nobr> Screen Capture Map</nobr>
+            </button> 
+            </div>  
+            <div v-else-if="isLoading == 0">   
+            <button class="button">
+              <!-- Image: Screen Capture by Desainer Kanan from the Noun Project -->
+              <img src="./Images/ScreenCapture.png" alt = "icon" height="40" width="40" align = "center" />
+              <br> <br>
 
-        </button> 
+            </button> 
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div v-if="isLoading2 == 1">
+            <button class="button" v-on:click="download()">
+              <nobr> Download Data with applied filters </nobr>
+            </button> 
+          </div>  
+          <div v-else-if="isLoading2 == 0">   
+            <button class="button">
+              <nobr> Processing Dowload... </nobr>
+            </button> 
+          </div>
         </div>
       </div>
     </th>
@@ -67,7 +81,7 @@ import html2canvas from 'html2canvas';
 
 var geojson
 
-const screenshotSound = require("./Sounds/screenshot.mp3");
+//const screenshotSound = require("./Sounds/screenshot.mp3");
 
 export default {
   name: 'map-tool',
@@ -90,6 +104,7 @@ export default {
       currentCountry: "",
       currentValue: 0,
       isLoading: 1,
+      isLoading2: 1,
     }
   },
 
@@ -106,8 +121,8 @@ export default {
     screenShot () {
       this.isLoading = 0;
 
-      let audio = new Audio(screenshotSound); // path to file
-      audio.play();
+      //let audio = new Audio(screenshotSound); // path to file
+      //audio.play();
 
       html2canvas(this.$refs.screen, { backgroundColor: '#FFFFFF', useCORS: true }).then((canvas) => {
         if (navigator.msSaveBlob) { // IE10+ 
@@ -130,6 +145,45 @@ export default {
       aLink.style.display = "none";
       aLink.href = downloadUrl;
       aLink.download = `${downloadName}.png`;
+      // Trigger click-then remove
+      document.body.appendChild(aLink);
+      aLink.click();
+      document.body.removeChild(aLink);
+    },
+
+    sleep(milliseconds) {
+      var start = new Date().getTime();
+      for (var i = 0; i < 1e7; i++) {
+        if ((new Date().getTime() - start) > milliseconds){
+          break;
+        }
+      }
+    },
+
+    download () {
+      this.isLoading = 0;
+
+      html2canvas(this.$refs.screen, { backgroundColor: '#FFFFFF', useCORS: true }).then((canvas) => {
+        if (navigator.msSaveBlob) { // IE10+ 
+          let blob = canvas.msToBlob(); 
+          return navigator.msSaveBlob(blob, name); 
+        } else {
+          let imageurl = canvas.toDataURL('image/png')
+          //You need to choose the naming rules yourself
+          this.fileDownloadFake(imageurl)
+          this.sleep(3000);
+          this.isLoading2 = 1;
+        }
+      })
+
+    },
+
+    //Download screenshot pictures
+    fileDownloadFake(downloadUrl) {
+      let aLink = document.createElement("a");
+      aLink.style.display = "none";
+      aLink.href = downloadUrl;
+      aLink.download = `ThisIsTheData.json`;
       // Trigger click-then remove
       document.body.appendChild(aLink);
       aLink.click();
@@ -375,7 +429,7 @@ export default {
 
 <style scoped>
 .map { 
-  height: 60vh;
+  height: 50vh;
   width: 50vw;
 }
 

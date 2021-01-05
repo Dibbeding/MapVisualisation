@@ -35,12 +35,9 @@
           </keep-alive>
         </th>
         <th class="componentplace">
-          <keep-alive v-if="checkIfNeedToBeAlive()">
-            <component v-bind:is="component" v-bind:getDataset="averageData" v-on:changed-filters="PassAverageData($event)"/>
-          </keep-alive>
-          <div v-else>
-            <component v-bind:is="component" v-bind:getDataset="averageData" v-on:changed-filters="PassAverageData($event)"/>
-          </div>
+            <component v-bind:is="component" v-bind:getDataset="averageData" v-bind:filterList="savedFilters"                                     
+                                             v-on:changed-filters="PassAverageData($event)"
+                                             v-on:save-filters="UpdateFilters($event)" />
         </th>
         <th>
           <div class="rightborder" />
@@ -85,19 +82,13 @@ export default {
   data: () => ({
       component:"Welcome",
       averageData: [],
+      savedFilters: {selectedItem: "", selectedItemSet: "", lowerYear: 0, higherYear: 0},
       value: 30,
   }),
 
     methods: {
-    
-    checkIfNeedToBeAlive() {
-      if (this.component == "FilterAndSort") return true
-
-      return false
-    },
 
     SwitchComponent(componentType) {
-      console.log("Componenttype switch met: ", componentType)
       if (componentType == "MapTool" && this.averageData.length == 0) {
         this.component = MapWarning
         return
@@ -109,8 +100,16 @@ export default {
       return
     },
 
+    UpdateFilters(changedFilters) {
+      this.savedFilters = {
+        lowerYear: changedFilters.filterList.lowerYear, 
+        higherYear: changedFilters.filterList.higherYear, 
+        selectedItem: changedFilters.filterList.selectedItem, 
+        selectedItemSet: changedFilters.filterList.selectedItemSet
+      }
+    },
+
     PassAverageData(dataPackage) {
-        console.log("Data in de app ", dataPackage)
         this.averageData = dataPackage.averageData
         this.component = dataPackage.component
     }

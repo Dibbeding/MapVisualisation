@@ -61,8 +61,12 @@
         </div>
       </tr>
 
-
-
+      <tr class="normText">
+        <button v-on:click="onComputeFilters()">
+          Apply filters
+        </button>
+      </tr>
+<!-- 
       <tr>
         <th class="smallerTitle">
           <br>
@@ -77,13 +81,9 @@
           General information about the used datasets can be found in the "General Info"-tab
         </th>
       </tr>
+-->
 
 
-      <tr class="normText">
-        <button v-on:click="onComputeFilters()">
-          Apply filters
-        </button>
-      </tr>
     </table>
 
 
@@ -99,6 +99,11 @@ import { cloneDeep } from "lodash" // To create actual copies of objects
 
 export default {
   name: 'FilterAndSort',
+
+  props: {
+    filterList: {type: Object},
+  },
+
   data() {
     
     return {
@@ -109,11 +114,12 @@ export default {
       fullDataYearsHigh: [],
       indexSub: 0,
       yearRange: 0,
-      curYearRange: {lowYear: 0, highYear: 0},
-      lowerYear: 0,
-      higherYear: 0,
-      selectedItem: "",
-      selectedItemSet: "",
+      curYearRange: {lowYear: this.filterList.lowerYear, highYear: this.filterList.higherYear},
+      tempVar: this.filterList,
+      lowerYear: this.filterList.lowerYear,
+      higherYear: this.filterList.higherYear,
+      selectedItem: this.filterList.selectedItem,
+      selectedItemSet: this.filterList.selectedItemSet,
       selectedItemIndex: 0, // TODO, -1 als begin
 
       datasetList: [
@@ -182,6 +188,12 @@ export default {
       // Set year range for selecting
       this.fullDataYearsLow = this.fullDataYears
       this.fullDataYearsHigh = this.fullDataYears
+      let event = { target: { value: "" } }
+      event.target.value = this.filterList.selectedItem
+      this.onSelectItem(event)
+
+
+
 
       this.yearRange = { lowestYear: this.indexSub, highestYear: (this.indexSub + this.fullData.length) }
       //console.log("Check fullData in created: ", this.fullData)
@@ -207,11 +219,23 @@ export default {
     onSelectLowYear(event) {
       this.curYearRange.lowYear = event.target.value
       this.updateHighYears(event.target.value)
+      this.$emit('save-filters', { filterList: {
+                                      selectedItem: this.selectedItem, 
+                                      selectedItemSet: this.selectedItemSet, 
+                                      lowerYear: event.target.value,
+                                      higherYear: this.higherYear
+                                    }});
     },
 
     onSelectHighYear(event) {
       this.curYearRange.highYear = event.target.value
       this.updateLowYears(event.target.value)
+      this.$emit('save-filters', { filterList: {
+                                      selectedItem: this.selectedItem, 
+                                      selectedItemSet: this.selectedItemSet, 
+                                      lowerYear: this.lowerYear,
+                                      higherYear: event.target.value
+                                    }});
     },
 
     updateLowYears(year) {
@@ -234,6 +258,12 @@ export default {
       for (let i = 0; i < this.fullData.length; i++) {
         this.fullDataYears[i] = i + this.indexSub
       }
+      this.$emit('save-filters', { filterList: {
+                                      selectedItem: event.target.value, 
+                                      selectedItemSet: this.selectedItemSet, 
+                                      lowerYear: this.lowerYear,
+                                      higherYear: this.higherYear
+                                    }});
     },
 
     onSelectItemSet() {
@@ -242,16 +272,15 @@ export default {
           this.selectedItemIndex = i; 
         }
       }
+      this.$emit('save-filters', { filterList: {
+                                      selectedItem: this.selectedItem, 
+                                      selectedItemSet: event.target.value, 
+                                      lowerYear: this.lowerYear,
+                                      higherYear: this.higherYear
+                                    }});
 
-      console.log(this.datasetList[this.selectedItemIndex].subjects)
     },
 
-    ParseData() {
-      //console.log("fullData: ", this.fullData)
-      //let temp = this.fullData[2018 - this.indexSub]
-      //console.log(temp)
-      //console.log(this.fullData[2018 - this.indexSub].Year[0])
-    },
 
     SelectYears() { 
       // Empty if not empty
@@ -261,14 +290,9 @@ export default {
       for (let index = this.curYearRange.lowYear; index <= this.curYearRange.highYear; index++) {
         this.partialData.push(this.fullData[index - this.indexSub])
       }
-      //console.log("filtered partial: ", this.partialData)
-      //console.log("filtered fullData: ", this.fullData)
     },
 
     computeAverage() {
-
-      //console.log("Check fullData in computeAverage: ", this.fullData)
-
       // Find the year with the most countries to use as a basis
       let largestLength = 0, largestIndex = -1;
       for (let indexYear = (this.curYearRange.lowYear - this.indexSub); 
@@ -282,7 +306,6 @@ export default {
       }
 
       let averageData = cloneDeep(this.fullData[largestIndex].Year)
-      console.log("Basisjaar: ", largestIndex + this.indexSub)
       // Use this array to know the divider for the average calculation
       let averageDivider = new Array(averageData.length)
       for (var i = 0; i < averageData.length; i++) { averageDivider[i] = 1 }
@@ -291,7 +314,7 @@ export default {
       // Iterate over all years
       for (let indexYear = this.curYearRange.lowYear; 
            indexYear <= this.curYearRange.highYear; indexYear++) {
-        console.log("Dit jaar: ", indexYear)
+        //console.log("Dit jaar: ", indexYear)
         // Iterate over all countries if the year is not used for the basis
         if (indexYear != (largestIndex + this.indexSub)) {
           let offsetIndex = 0
@@ -316,10 +339,10 @@ export default {
                 // Country A == Country B, their values can be added
                 case 0:
                   //console.log("SAME LAND")
-                  if (countryA == "Netherlands") { console.log("Before adding: ", averageData[indexCountry]) }
+                  //if (countryA == "Netherlands") { console.log("Before adding: ", averageData[indexCountry]) }
                   averageData[indexCountry].Value += this.fullData[indexYear - this.indexSub].Year[indexCountry + offsetIndex].Value
                   averageDivider[indexCountry]++
-                  if (countryA == "Netherlands") { console.log("After adding: ", averageData[indexCountry]) }
+                  //if (countryA == "Netherlands") { console.log("After adding: ", averageData[indexCountry]) }
                   break;
 
                 // Country B needs to be inserted into the list
@@ -353,7 +376,13 @@ export default {
       
 
       //console.log("Average: ", averageData)
-      this.$emit('changed-filters', { averageData: {data: averageData, years: this.curYearRange, subject: this.selectedItem }, component: "MapTool"});
+      this.$emit('changed-filters', { averageData: {
+                                        data: averageData, 
+                                        years: this.curYearRange, 
+                                        subject: this.selectedItem
+                                      }, 
+                                      component: "MapTool"
+                                    });
       console.log(this.selectedItem)
     },
     applyFilters() {

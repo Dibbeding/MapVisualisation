@@ -15,7 +15,21 @@
       <th class="normText" ref="screen">
         <div v-if="isLoading == 1">
           <button class="button" v-on:click="screenShot()">
-            <nobr> Download Data </nobr>
+            <nobr> Download full data</nobr>
+          </button> 
+        </div>  
+        <div v-else-if="isLoading == 0">   
+          <button class="button">
+            <nobr> Processing Dowload... </nobr>
+          </button> 
+        </div>
+      </th>
+    </tr>
+    <tr>
+      <th class="normText" ref="screen">
+        <div v-if="isLoading == 1">
+          <button class="button" v-on:click="screenShot()">
+            <nobr> Download filtered data</nobr>
           </button> 
         </div>  
         <div v-else-if="isLoading == 0">   

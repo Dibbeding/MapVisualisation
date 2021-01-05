@@ -9,6 +9,7 @@
       <th class="normText">
         This application has been developed by Lal Avgen and Wouter Ebing for <br> 
         the course "Human Computer Interaction & Information Visualisation". <br>
+        The source code can be found on <a href="https://github.com/Dibbeding/MapVisualisation.git">GitHub</a> <br>
         <br>
         The goal of the application is to improve aspects of map-based visualisations of global data. <br>
         The data used originates from edited versions of datasets from the <a href="http://www.fao.org/faostat/en/#home" font-color="white">Food and Agriculture <br>
