@@ -95,7 +95,7 @@ export default {
       }
 
       if (this.component != componentType) {
-        this.component = componentType;
+        this.component = componentType
       }
       return
     },
@@ -155,7 +155,6 @@ export default {
   padding-bottom: 15px;
   margin-right: auto;
   
-  /* make the text not selectable*/
   -moz-user-select: -moz-none;
   -khtml-user-select: none;
   -webkit-user-select: none;

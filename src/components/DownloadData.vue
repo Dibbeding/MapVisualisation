@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import html2canvas from 'html2canvas';
+import html2canvas from 'html2canvas'
 
 export default {
   name: 'DownloadData',
@@ -62,49 +62,46 @@ export default {
   methods: {
 
     sleep(milliseconds) {
-      var start = new Date().getTime();
+      var start = new Date().getTime()
       for (var i = 0; i < 1e7; i++) {
         if ((new Date().getTime() - start) > milliseconds){
-          break;
+          break
         }
       }
     },
 
     screenShot () {
-      this.isLoading = 0;
+      this.isLoading = 0
 
       html2canvas(this.$refs.screen, { backgroundColor: '#FFFFFF', useCORS: true }).then((canvas) => {
-        if (navigator.msSaveBlob) { // IE10+ 
-          let blob = canvas.msToBlob(); 
-          return navigator.msSaveBlob(blob, name); 
+        if (navigator.msSaveBlob) { 
+          let blob = canvas.msToBlob()
+          return navigator.msSaveBlob(blob, name)
         } else {
           let imageurl = canvas.toDataURL('image/png')
-          //You need to choose the naming rules yourself
           this.fileDownload(imageurl)
-          this.sleep(3000);
-          this.isLoading = 1;
+          this.sleep(3000)
+          this.isLoading = 1
         }
       })
 
     },
 
-    //Download screenshot pictures
     fileDownload(downloadUrl) {
-      let aLink = document.createElement("a");
-      aLink.style.display = "none";
-      aLink.href = downloadUrl;
-      aLink.download = `ThisIsTheData.json`;
-      // Trigger click-then remove
-      document.body.appendChild(aLink);
-      aLink.click();
-      document.body.removeChild(aLink);
+      let aLink = document.createElement("a")
+      aLink.style.display = "none"
+      aLink.href = downloadUrl
+      aLink.download = `ThisIsTheData.json`
+      document.body.appendChild(aLink)
+      aLink.click()
+      document.body.removeChild(aLink)
     },
 
 
   }
 }
 </script>
-<!-- Add "scoped" attribute to limit CSS to this component only -->
+
 <style scoped>
 
 .title {
@@ -156,8 +153,6 @@ a:hover {
   margin-top: 10px;
   padding: 10px;
 
-
-  /* make the text not selectable*/
   -moz-user-select: -moz-none;
   -khtml-user-select: none;
   -webkit-user-select: none;

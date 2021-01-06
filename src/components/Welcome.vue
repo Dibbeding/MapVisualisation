@@ -17,8 +17,7 @@
         <br>
         In order to get started, open the "Filter & Sort"-tab by clicking the button on the left. <br>
         There you can select a subject, which will be visualized in the "Map"-tab. For more information <br>
-        about the datasets, you can click the button for the "Glossary"-tab. If you want to save the current <br>
-        visualisation, you can click the "Screen Capture"-button on the top-right while on the "Map"-tab. <br>
+        about the datasets, you can click the button for the "Glossary"-tab. <br>
         <br>
         If something seems unclear, you can press the "Help"-button on the top-right. This will direct you <br>
         to a page with instructions.
@@ -36,7 +35,7 @@ export default {
   }
 }
 </script>
-<!-- Add "scoped" attribute to limit CSS to this component only -->
+
 <style scoped>
 
 .title {

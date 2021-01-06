@@ -82,7 +82,7 @@ export default {
   }
 }
 </script>
-<!-- Add "scoped" attribute to limit CSS to this component only -->
+
 <style scoped>
 .title {
   font-size: xxx-large;
@@ -101,8 +101,6 @@ export default {
 
 .helptable {
   width: 100%;
-  /*margin-left: auto;
-  margin-right: auto;*/
 }
 
 .tab {

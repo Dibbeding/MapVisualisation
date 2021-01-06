@@ -66,36 +66,13 @@
           Apply filters
         </button>
       </tr>
-<!-- 
-      <tr>
-        <th class="smallerTitle">
-          <br>
-          More information
-        </th>
-      </tr>
-
-      <tr>
-        <th class="normText">
-          Clarifications on how to read the data can be found in the "Glossary"-tab. <br>
-          <br>
-          General information about the used datasets can be found in the "General Info"-tab
-        </th>
-      </tr>
--->
-
-
     </table>
-
-
-
   </div>
 </template>
 
 <script>
 import ChickenData from './DataFiles/chickenData.json'
-//import pigData from './DataFiles/pigData.json'
-import { cloneDeep } from "lodash" // To create actual copies of objects
-//https://www.convertcsv.com/csv-to-json.htm
+import { cloneDeep } from "lodash" 
 
 export default {
   name: 'FilterAndSort',
@@ -120,7 +97,7 @@ export default {
       higherYear: this.filterList.higherYear,
       selectedItem: this.filterList.selectedItem,
       selectedItemSet: this.filterList.selectedItemSet,
-      selectedItemIndex: 0, // TODO, -1 als begin
+      selectedItemIndex: 0, 
 
       datasetList: [
         { name: "Crops", subjects: ["Apples","Apricots","Artichokes","Asparagus","Bananas","Barley",
@@ -159,9 +136,9 @@ export default {
 
   created : function() {
       // Turn the JSON into better structered data
-      this.parseData;
+      this.parseData
       let DataSet = ChickenData
-      let oldYear = DataSet[0]["Year"], year;
+      let oldYear = DataSet[0]["Year"], year
       let yearData = new Array();
 
       // First calculate indexSub
@@ -173,7 +150,7 @@ export default {
         // If a new year is found, add all the countries of the previous year to fullData
         if (oldYear != year) {
           this.fullData.push({Year: yearData})
-          yearData = new Array();
+          yearData = new Array()
           oldYear = year
         }
 
@@ -196,18 +173,17 @@ export default {
 
 
       this.yearRange = { lowestYear: this.indexSub, highestYear: (this.indexSub + this.fullData.length) }
-      //console.log("Check fullData in created: ", this.fullData)
   },
 
   mounted () {
-    this.fullData;
-    this.partialData;
-    this.indexSub;   
-    this.yearRange;
-    this.curYearRange;
-    this.selectedItem;
-    this.updateLowYears;
-    this.updateHighYears;
+    this.fullData
+    this.partialData
+    this.indexSub 
+    this.yearRange
+    this.curYearRange
+    this.selectedItem
+    this.updateLowYears
+    this.updateHighYears
   },
 
   methods: {
@@ -224,7 +200,7 @@ export default {
                                       selectedItemSet: this.selectedItemSet, 
                                       lowerYear: event.target.value,
                                       higherYear: this.higherYear
-                                    }});
+                                    }})
     },
 
     onSelectHighYear(event) {
@@ -235,7 +211,7 @@ export default {
                                       selectedItemSet: this.selectedItemSet, 
                                       lowerYear: this.lowerYear,
                                       higherYear: event.target.value
-                                    }});
+                                    }})
     },
 
     updateLowYears(year) {
@@ -263,13 +239,13 @@ export default {
                                       selectedItemSet: this.selectedItemSet, 
                                       lowerYear: this.lowerYear,
                                       higherYear: this.higherYear
-                                    }});
+                                    }})
     },
 
     onSelectItemSet() {
       for (let i = 0; i < this.datasetList.length; i++) {
         if (this.selectedItemSet == this.datasetList[i].name) {
-          this.selectedItemIndex = i; 
+          this.selectedItemIndex = i
         }
       }
       this.$emit('save-filters', { filterList: {
@@ -277,7 +253,7 @@ export default {
                                       selectedItemSet: event.target.value, 
                                       lowerYear: this.lowerYear,
                                       higherYear: this.higherYear
-                                    }});
+                                    }})
 
     },
 
@@ -314,7 +290,7 @@ export default {
       // Iterate over all years
       for (let indexYear = this.curYearRange.lowYear; 
            indexYear <= this.curYearRange.highYear; indexYear++) {
-        //console.log("Dit jaar: ", indexYear)
+
         // Iterate over all countries if the year is not used for the basis
         if (indexYear != (largestIndex + this.indexSub)) {
           let offsetIndex = 0
@@ -331,59 +307,40 @@ export default {
               switch (result) {
                 // CountryB might be found later
                 case -1:
-                  //console.log("SKIP LAND")
-                  //if (indexCountry < 10) { console.log("Country not yet found: ", countryB) }
                   --offsetIndex
-                  continue;
+                  continue
       
                 // Country A == Country B, their values can be added
                 case 0:
-                  //console.log("SAME LAND")
-                  //if (countryA == "Netherlands") { console.log("Before adding: ", averageData[indexCountry]) }
                   averageData[indexCountry].Value += this.fullData[indexYear - this.indexSub].Year[indexCountry + offsetIndex].Value
                   averageDivider[indexCountry]++
-                  //if (countryA == "Netherlands") { console.log("After adding: ", averageData[indexCountry]) }
-                  break;
+                  break
 
                 // Country B needs to be inserted into the list
                 case 1:
-                  /*console.log(" \n \nCountry original = ", countryA)
-                  console.log("thing to insert = ", countryB)
-                  console.log("Result: ", result)
-                  console.log("indexCountry: ", indexCountry)
-                  console.log("Offset: ", indexCountry + offsetIndex)
-                  console.log("INSERT LAND")*/
-                  //console.log("country")
                   averageData.splice(indexCountry, 0, cloneDeep(this.fullData[indexYear - this.indexSub].Year[indexCountry + offsetIndex]))
                   averageDivider.splice(indexCountry, 0, 1) 
-                  //console.log("Average after: ", averageData)
-                  break;
-              }//switch
-            }//if
-          }//for
-        }//if
-      }//for
+                  break
+              }
+            }
+          }
+        }
+      }
 
-      // Secondly calculate the average !!! Shit ik moet ook rekening houden met null values
+      // Secondly calculate the average
       for (let indexCountry = 0; indexCountry < averageData.length; indexCountry++) {
-        //console.log("Value ", averageData[indexCountry].Value)
-        //console.log("Divider: ",  averageDivider[indexCountry])
-        if (!(this.selectedItem == "Chickens")) { averageDivider[indexCountry] += 10; }
+        if (!(this.selectedItem == "Chickens")) { averageDivider[indexCountry] += 10 }
 
         averageData[indexCountry].Value /= averageDivider[indexCountry]
       }
 
-      
-
-      //console.log("Average: ", averageData)
       this.$emit('changed-filters', { averageData: {
                                         data: averageData, 
                                         years: this.curYearRange, 
                                         subject: this.selectedItem
                                       }, 
                                       component: "MapTool"
-                                    });
-      console.log(this.selectedItem)
+                                    })
     },
     applyFilters() {
       
@@ -434,8 +391,6 @@ export default {
 
 .filtertable {
   width: 100%;
-  /*margin-left: auto;
-  margin-right: auto;*/
 }
 
 .subjectlist {

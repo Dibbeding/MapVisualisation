@@ -29,7 +29,7 @@
     </button>
     <h1 class="whitespace" />
     <button v-on:click="ChangeComponent(5)" class="button">
-      <!-- Image: Map by shashank singh from the Noun Project //TODO Goede naam zoeken-->
+      <!-- Image: Map by shashank singh from the Noun Project -->
       <img src="./Images/Map.png" alt = "icon" height="100" width="100" align = "center" />
       <br>
       <br> Map
@@ -47,23 +47,23 @@ export default {
       switch (id) {
         case 1:
           component = "FilterAndSort"
-          break;
+          break
         case 2:
           component = "GeneralInfo"
-          break;
+          break
         case 3:
           component = "Glossary"
-          break;
+          break
         case 4:
           component = "DownloadData"
-          break;
+          break
         case 5:
           component = "MapTool"
-          break;
+          break
           
 
       }
-      this.$emit('change-component', component);
+      this.$emit('change-component', component)
     }
   }
 }
@@ -91,8 +91,6 @@ export default {
   margin-left: auto;
   margin-right: auto;
 
-
-  /* make the text not selectable*/
   -moz-user-select: -moz-none;
   -khtml-user-select: none;
   -webkit-user-select: none;
