@@ -1,6 +1,6 @@
 # MaptheData
 The source code contained in this submission can be run on localhost using an UNIX-based terminal. 
-The following two commands should be run:                                                        
+The following two commands should be executed:                                                        
 
 In order to install dependencies
 ```
